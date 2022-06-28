@@ -17,6 +17,8 @@ use dialoguer::{Confirm, Input, Password};
 use kanidm_client::ClientError::Http as ClientErrorHttp;
 use kanidm_proto::v1::OperationError::PasswordQuality;
 use kanidm_proto::v1::{CUIntentToken, CURegState, CUSessionToken, CUStatus};
+use kanidm_proto::messages::{AccountChangeMessage,MessageStatus};
+
 use std::fmt;
 use std::str::FromStr;
 use url::Url;
@@ -94,11 +96,22 @@ impl AccountOpt {
                 }
                 AccountRadius::Delete(aopt) => {
                     let client = aopt.copt.to_client().await;
-                    if let Err(e) = client
+
+                    let modmessage = AccountChangeMessage{
+                        output_mode,
+                        action: "account_delete".to_string(),
+                        result: "deleted",
+                        src_user: aopt.copt.username.to_string(),
+                        dest_user: aopt.aopts.account_id.as_str(),
+                        status: MessageStatus::Success,
+                    };
+                    match client
                         .idm_account_radius_credential_delete(aopt.aopts.account_id.as_str())
                         .await
                     {
-                        error!("Error -> {:?}", e);
+                        Err(e) => error!("Error -> {:?}", e),
+                        Some(result) => {
+                        }
                     }
                 }
             }, // end AccountOpt::Radius

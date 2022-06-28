@@ -13,6 +13,7 @@ use kanidm_proto::v1::{CUIntentToken, CURegState, CUSessionToken, CUStatus};
 use kanidm_proto::messages::{AccountChangeMessage,MessageStatus};
 use qrcode::{render::unicode, QrCode};
 use std::fmt::{self, Debug};
+
 use std::str::FromStr;
 use time::OffsetDateTime;
 use url::Url;

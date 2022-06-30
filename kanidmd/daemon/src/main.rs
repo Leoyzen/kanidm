@@ -79,7 +79,6 @@ impl KanidmdOpt {
         match self {
             KanidmdOpt::Server(sopt)
             | KanidmdOpt::ConfigTest(sopt)
-            | KanidmdOpt::DomainChange(sopt)
             | KanidmdOpt::DbScan {
                 commands: DbScanOpt::ListIndexes(sopt),
             }
@@ -102,7 +101,9 @@ impl KanidmdOpt {
             KanidmdOpt::SystemSettings {
                 commands: SystemSettingsCmds::SetDomainDisplayName(sopt)
             } => &sopt.commonopts,
-
+            KanidmdOpt::SystemSettings {
+                commands: SystemSettingsCmds::DomainChange(sopt)
+            } => &sopt,
             KanidmdOpt::Database { commands: DbCommands::Verify(sopt) }
             | KanidmdOpt::Database { commands: DbCommands::Reindex(sopt) }
             => &sopt,
@@ -329,11 +330,6 @@ async fn main() {
             eprintln!("Running in reindex mode ...");
             reindex_server_core(&config);
         }
-
-        KanidmdOpt::DomainChange(_dopt) => {
-            eprintln!("Running in domain name change mode ... this may take a long time ...");
-            domain_rename_core(&config);
-        }
         KanidmdOpt::DbScan {
             commands: DbScanOpt::ListIndexes(_),
         } => {
@@ -369,6 +365,12 @@ async fn main() {
         } => {
             eprintln!("system settings: set domain_display_name - {:?}", &sopt.domain_display_name);
             domain_display_set_core(&config, sopt.domain_display_name.as_str())
+        }
+        KanidmdOpt::SystemSettings {
+            commands: SystemSettingsCmds::DomainChange(_dopt)
+        }=> {
+            eprintln!("Running in domain name change mode ... this may take a long time ...");
+            domain_rename_core(&config);
         }
         KanidmdOpt::Database {
             commands: DbCommands::Vacuum(_copt)

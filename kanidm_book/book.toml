@@ -1,6 +1,12 @@
 [book]
-authors = ["William Brown"]
+authors = [
+    "William Brown",
+    "James Hodgkinson",
+    "Carla Schroder",
+]
 language = "en"
 multilingual = false
 src = "src"
 title = "Kanidm Administration"
+
+[preprocessor.template]
